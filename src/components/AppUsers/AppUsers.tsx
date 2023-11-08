@@ -1,7 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { User } from "../../state/Users/usersSlice"
 import AppUser from "../AppUser/AppUser"
-import { AppDispatch, RootState } from "../../state/store";
+import {  RootState } from "../../state/store";
+import { useEffect } from "react";
+
 
 interface AppUsesrComponentProps {
     users: User[]
@@ -10,25 +12,23 @@ interface AppUsesrComponentProps {
 const AppUsers: React.FC<AppUsesrComponentProps> = ({users}) => {
 
     const USERS_PER_PAGE = 6;
-    const totalPages: number = useSelector((state: RootState) => state.users.totalPages);
-    const dispatch = useDispatch<AppDispatch>();
-    const pagesArray: number[] = createArrayUpTo(totalPages);
+    const pageDashboard: any = useSelector((state: RootState) => state.users.page);
 
-    function createArrayUpTo(x: number): number[] {
-        const result: number[] = [];
-        for (let i = 1; i <= x; i++) {
-          result.push(i);
-        }
-        return result;
-      }
-
+    useEffect(() => {
+      console.log(pageDashboard)
+  
+    },[]);
+    
   return (
     <div>
       {
       users.length > 0 ? (
                   users.map(
-                    (user: User) => {
-                      return <AppUser key={user.id} user={user} />
+                    (user: User, index: number) => {
+                      
+                        const res =  (USERS_PER_PAGE*(pageDashboard-1) < index && USERS_PER_PAGE*(pageDashboard) > index ) ?  <AppUser key={user.id} user={user} />: <></>
+                        return res
+        
                     }
                   )
                 ) : (

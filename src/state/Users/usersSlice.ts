@@ -37,6 +37,7 @@ const usersSlice = createSlice({
             state.isLoading = true;
         })
         .addCase(fetchUsers.fulfilled, (state, action: PayloadAction<userResponse>) => {
+            state.page = action.payload.page;
             if(!state.pages?.includes(action.payload.page)){
                 state.pages?.push(action.payload.page);
                 action.payload.users.forEach((user: User) => {
@@ -47,6 +48,15 @@ const usersSlice = createSlice({
         })
         .addCase(getTotalPages.fulfilled, (state, action: PayloadAction<number>) => {
             state.totalPages = action.payload;
+        })
+        .addCase(deleteUser.pending, (state) => {
+            state.isLoading = true;
+        })
+        .addCase(deleteUser.fulfilled, (state, action: PayloadAction<any>) => {
+            console.log("here")
+            const filteredArray = state.data.filter((obj) => obj.id !== 2);
+            state.data = filteredArray;
+            state.isLoading = false;
         })
  
     },
@@ -77,6 +87,18 @@ export const getTotalPages = createAsyncThunk(
         const data  = await res.json();
         const totalPages: number = data.total_pages
         return totalPages;
+    }
+)
+
+export const deleteUser = createAsyncThunk(
+    "users/deleteUser",
+    async (id: number) => {
+        await fetch(`https://reqres.in/api/users/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json', 
+            },
+          })
     }
 )
   

@@ -8,36 +8,38 @@ import AppButton from "../../components/AppButton/AppButton";
 
 const Dashboard = () => {
 
-
   const users: any = useSelector((state: RootState) => state.users.data);
-  const pageDashboard: any = useSelector((state: RootState) => state.users.page);
-
+  const totalPages: number = useSelector((state: RootState) => state.users.totalPages);
+  const pagesArray: number[] = createArrayUpTo(totalPages);
   const isLoading: any = useSelector((state: RootState) => state.users.isLoading);
   const dispatch = useDispatch<AppDispatch>();
- 
   
+  function createArrayUpTo(x: number): number[] {
+    const result: number[] = [];
+    for (let i = 1; i <= x; i++) {
+      result.push(i);
+    }
+    return result;
+  }
   
-
-
   useEffect(() => {
     const getUsers = async() => {
       dispatch(fetchUsers(1));
     }
 
+    getUsers();
+
     const getTotalPagesFunc = async() => {
       dispatch(getTotalPages());
     }
 
-    
-    
-
-    getUsers();
     getTotalPagesFunc();
+
   },[]);
 
 
   const changePage = (id:number) => {
-    dispatch(fetchUsers(2));
+    dispatch(fetchUsers(id));
   }
 
   return (
@@ -49,8 +51,7 @@ const Dashboard = () => {
         <AppUsers users={users} />
         <div className="d-flex p-2 justify-content-center">
         {pagesArray.map((page: number, index: number) => {
-          const res =  (USERS_PER_PAGE*(pageDashboard-1) > index && USERS_PER_PAGE*(pageDashboard) < index ) ?  <AppButton key={index} onClick={() => changePage(index)} text={page.toString()}></AppButton> : <p key={index}>No User</p>
-          return res
+        return  <AppButton key={index} onClick={() => changePage(index+1)} text={page.toString()}></AppButton>
         })}
         </div>
       </>
