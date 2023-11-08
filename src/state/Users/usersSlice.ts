@@ -45,7 +45,7 @@ const usersSlice = createSlice({
             }
             state.isLoading = false;
         })
-        .addCase(getTotalUsers.fulfilled, (state, action: PayloadAction<number>) => {
+        .addCase(getTotalPages.fulfilled, (state, action: PayloadAction<number>) => {
             state.totalPages = action.payload;
         })
  
@@ -69,17 +69,18 @@ export const fetchUsers = createAsyncThunk(
     }
   )
 
-export const getTotalUsers = createAsyncThunk(
-    "users/getTotalUsers",
+export const getTotalPages = createAsyncThunk(
+    "users/getTotalPages",
     async (): Promise<number> => {
         const res = await fetch(`https://reqres.in/api/users?page=1`);
 
         const data  = await res.json();
-        const totalPages: number = data.total
+        const totalPages: number = data.total_pages
         return totalPages;
     }
 )
   
+
 
 export default usersSlice.reducer;
 

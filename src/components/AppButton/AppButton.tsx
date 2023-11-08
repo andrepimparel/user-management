@@ -1,5 +1,7 @@
+import "./AppButton.css"
+
 interface AppButtonComponentProps {
-    onClick?: () => {};
+    onClick?: (() => any);
     text?: string
   }
 
