@@ -1,8 +1,8 @@
 import { FaTimes , FaEdit} from 'react-icons/fa';
-import { User, deleteUser } from '../../state/Users/usersSlice';
-import AppTextLabel from '../AppTextLabel/AppTextLabel';
-import { AppDispatch, RootState } from "../../state/store";
-import { useDispatch } from 'react-redux';
+import { User, deleteUser, fetchUsers } from '../../../state/Users/usersSlice';
+import AppTextLabel from '../../AppTextLabel/AppTextLabel';
+import { AppDispatch, RootState } from "../../../state/store";
+import { useDispatch, useSelector } from 'react-redux';
 
 
 interface AppUserComponentProps {
@@ -12,10 +12,11 @@ interface AppUserComponentProps {
 
 const AppUser: React.FC<AppUserComponentProps> = ({ user}) => {
   const dispatch = useDispatch<AppDispatch>();
+  const page: number = useSelector((state: RootState) => state.users.page);
   
   const onDelete = (id:number) => {
-    console.log("ola "+id)
     dispatch(deleteUser(id));
+    dispatch(fetchUsers({page: page+1,chagePage: false}))
   }
 
   return (

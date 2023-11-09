@@ -2,15 +2,16 @@ import { useState } from "react";
 
 interface AppTextInputComponentProps {
     min?: number;
+    value?: any;
+    onChange?: any;
   }
 
-const AppTextInput: React.FC<AppTextInputComponentProps>  = ({ min }) => {
+const AppTextInput: React.FC<AppTextInputComponentProps>  = ({ min, value, onChange }) => {
 
-  const [text, setText] = useState('')
   return (
     <>
       <input type='text' minLength={min}
-      value={text} onChange={(e) => setText(e.target.value)}/> 
+      value={value}  onChange={(e) => onChange(e.target.value)}/> 
     </>
 
   )
@@ -18,6 +19,7 @@ const AppTextInput: React.FC<AppTextInputComponentProps>  = ({ min }) => {
 
 AppTextInput.defaultProps = {
   min: 1,
+  onChange: () => {}
 }
 
 

@@ -1,7 +1,7 @@
 import {  useSelector } from "react-redux";
-import { User } from "../../state/Users/usersSlice"
+import { User } from "../../../state/Users/usersSlice"
 import AppUser from "../AppUser/AppUser"
-import {  RootState } from "../../state/store";
+import {  RootState } from "../../../state/store";
 import { useEffect } from "react";
 
 
@@ -22,11 +22,11 @@ const AppUsers: React.FC<AppUsesrComponentProps> = ({users}) => {
   return (
     <div>
       {
-      users.length > 0 ? (
+      users.length > 0 && users.slice(USERS_PER_PAGE*(pageDashboard-1),USERS_PER_PAGE*(pageDashboard)).length ? (
                   users.map(
                     (user: User, index: number) => {
                       
-                        const res =  (USERS_PER_PAGE*(pageDashboard-1) < index && USERS_PER_PAGE*(pageDashboard) > index ) ?  <AppUser key={user.id} user={user} />: <></>
+                        const res =  (USERS_PER_PAGE*(pageDashboard-1) <= index && USERS_PER_PAGE*(pageDashboard) > index ) ?  <AppUser key={user.id} user={user} />: <></>
                         return res
         
                     }

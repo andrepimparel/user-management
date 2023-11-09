@@ -1,4 +1,7 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { AnyAction, AsyncThunkAction, Dispatch, PayloadAction, configureStore, createAsyncThunk, createSlice, createStore } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
+
 
 export interface User {
     id: number,
@@ -14,6 +17,7 @@ interface UsersState  {
     pages: number[];
     isLoading: boolean;
     totalPages: number;
+    isAddUser: boolean;
 }
 
 
@@ -23,13 +27,19 @@ const initialState: UsersState  = {
     pages: [],
     isLoading: false,
     totalPages: 0,
+    isAddUser: false,
 };
 
 const usersSlice = createSlice({
     name: "users",
     initialState,
     reducers: {
-       
+       showAddUser: (state) => {
+        state.isAddUser = true;
+       },
+       hideAddUser: (state) => {
+        state.isAddUser = false;
+       }
     },
     extraReducers: (builder) => {
         builder
@@ -37,7 +47,9 @@ const usersSlice = createSlice({
             state.isLoading = true;
         })
         .addCase(fetchUsers.fulfilled, (state, action: PayloadAction<userResponse>) => {
-            state.page = action.payload.page;
+            if(action.payload.chagePage){
+                state.page = action.payload.page;
+            }
             if(!state.pages?.includes(action.payload.page)){
                 state.pages?.push(action.payload.page);
                 action.payload.users.forEach((user: User) => {
@@ -52,9 +64,9 @@ const usersSlice = createSlice({
         .addCase(deleteUser.pending, (state) => {
             state.isLoading = true;
         })
-        .addCase(deleteUser.fulfilled, (state, action: PayloadAction<any>) => {
-            console.log("here")
-            const filteredArray = state.data.filter((obj) => obj.id !== 2);
+        .addCase(deleteUser.fulfilled, (state, action: PayloadAction<number>) => {
+            const filteredArray = state.data.filter((obj) => obj.id !== action.payload);
+            console.log(filteredArray)
             state.data = filteredArray;
             state.isLoading = false;
         })
@@ -64,18 +76,27 @@ const usersSlice = createSlice({
 
 interface userResponse {
     users: User[],
-    page: number
+    page: number,
+    chagePage: boolean
+}
+
+interface userParam {
+    page: number,
+    chagePage: boolean
 }
 
 export const fetchUsers = createAsyncThunk(
     "users/addUsers",
-    async (page: number): Promise<userResponse> => {
-        const res = await fetch(`https://reqres.in/api/users?page=${page}`);
+    async ( param: userParam): Promise<userResponse> => {
+        const res = await fetch(`https://reqres.in/api/users?page=${param.page}`);
    
         const data  = await res.json();
-        const users: User[] = data.data
+        const users: User[] = data.data;
+        const page = param.page;
+        const chagePage = param.chagePage;
+ 
 
-        return {users, page};
+        return {users, page, chagePage};
     }
   )
 
@@ -93,17 +114,23 @@ export const getTotalPages = createAsyncThunk(
 export const deleteUser = createAsyncThunk(
     "users/deleteUser",
     async (id: number) => {
+      
         await fetch(`https://reqres.in/api/users/${id}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json', 
             },
           })
+        const resId: number = id;
+        return resId;
     }
 )
   
 
+export const { showAddUser, hideAddUser } = usersSlice.actions;
 
 export default usersSlice.reducer;
+
+
 
 

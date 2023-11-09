@@ -2,13 +2,15 @@ import "./AppButton.css"
 
 interface AppButtonComponentProps {
     onClick?: (() => any);
-    text?: string
+    text?: string;
+    isSelected?: boolean;
+    type?: string;
   }
 
-const AppButton: React.FC<AppButtonComponentProps>  = ({ onClick, text }) => {
+const AppButton: React.FC<AppButtonComponentProps>  = ({ onClick, text, isSelected,type }) => {
   return (
     <button  
-        className='btn btn-primary'
+        className={'btn ' + (isSelected ? 'btn-outline-'+type+' ' : 'btn-'+type+' ')}
         onClick={onClick}
         >
         {text}
@@ -17,7 +19,8 @@ const AppButton: React.FC<AppButtonComponentProps>  = ({ onClick, text }) => {
 }
 
 AppButton.defaultProps = {
-
+  isSelected: false,
+  type: "primary"
 }
 
 
