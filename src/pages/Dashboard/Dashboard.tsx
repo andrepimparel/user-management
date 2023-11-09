@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "../../state/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { fetchUsers, getTotalPages, showAddUser,  } from "../../state/Users/usersSlice"
 import AppLoading from "../../components/AppLoading/AppLoading";
 import AppUsers from "../../components/User/AppUsers/AppUsers";
@@ -12,17 +12,20 @@ const Dashboard = () => {
   const users: any = useSelector((state: RootState) => state.users.data);
   const isAddUser: any = useSelector((state: RootState) => state.users.isAddUser);
   const selectedPage : any = useSelector((state: RootState) => state.users.page);
+  const totalUsers : any = useSelector((state: RootState) => state.users.totalUsers);
   const totalPages: number = useSelector((state: RootState) => state.users.totalPages);
-  const pagesArray: number[] = createArrayUpTo(totalPages);
+  const pagesArray: number[] = createArrayUpTo(Math.ceil(totalUsers/6) );
   const isLoading: any = useSelector((state: RootState) => state.users.isLoading);
   const dispatch = useDispatch<AppDispatch>();
   
+
+
   function createArrayUpTo(x: number): number[] {
     const result: number[] = [];
     for (let i = 1; i <= x; i++) {
       result.push(i);
     }
-    return result;
+    return result
   }
   
   useEffect(() => {

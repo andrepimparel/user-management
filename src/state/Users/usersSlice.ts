@@ -18,6 +18,7 @@ interface UsersState  {
     isLoading: boolean;
     totalPages: number;
     isAddUser: boolean;
+    totalUsers: number;
 }
 
 
@@ -28,6 +29,7 @@ const initialState: UsersState  = {
     isLoading: false,
     totalPages: 0,
     isAddUser: false,
+    totalUsers: 0,
 };
 
 const usersSlice = createSlice({
@@ -55,11 +57,13 @@ const usersSlice = createSlice({
                 action.payload.users.forEach((user: User) => {
                     state.data?.push(user)
                 })
+
             }
             state.isLoading = false;
         })
         .addCase(getTotalPages.fulfilled, (state, action: PayloadAction<number>) => {
-            state.totalPages = action.payload;
+            // state.totalPages = action.payload;
+            state.totalUsers = action.payload;
         })
         .addCase(deleteUser.pending, (state) => {
             state.isLoading = true;
@@ -68,6 +72,7 @@ const usersSlice = createSlice({
             const filteredArray = state.data.filter((obj) => obj.id !== action.payload);
             console.log(filteredArray)
             state.data = filteredArray;
+            state.totalUsers = filteredArray.length;
             state.isLoading = false;
         })
  
@@ -106,7 +111,7 @@ export const getTotalPages = createAsyncThunk(
         const res = await fetch(`https://reqres.in/api/users?page=1`);
 
         const data  = await res.json();
-        const totalPages: number = data.total_pages
+        const totalPages: number = data.total
         return totalPages;
     }
 )
